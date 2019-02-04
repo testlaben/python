@@ -6,47 +6,55 @@ Year, ISBN
 """
 
 from tkinter import *
-import backend
+from backend import Database
 
+
+database = Database("books.db")
 
 def get_selected_row(event):
-    global selected_tuple
-    index = list.curselection()[0]
-    selected_tuple = list.get(index)
-    l1_entry.delete(0, END)
-    l1_entry.insert(END, selected_tuple[1])
-    l2_entry.delete(0, END)
-    l2_entry.insert(END, selected_tuple[2])
-    l3_entry.delete(0, END)
-    l3_entry.insert(END, selected_tuple[3])
-    l4_entry.delete(0, END)
-    l4_entry.insert(END, selected_tuple[4])
-
+    try:
+        global selected_tuple
+        index = list.curselection()[0]
+        selected_tuple = list.get(index)
+        l1_entry.delete(0, END)
+        l1_entry.insert(END, selected_tuple[1])
+        l2_entry.delete(0, END)
+        l2_entry.insert(END, selected_tuple[2])
+        l3_entry.delete(0, END)
+        l3_entry.insert(END, selected_tuple[3])
+        l4_entry.delete(0, END)
+        l4_entry.insert(END, selected_tuple[4])
+    except IndexError:
+        pass
 
 def view_command():
     list.delete(0, END)
-    for row in backend.view():
+    for row in Database.view():
         list.insert(END, row)
 
 
 def search_command():
     list.delete(0,END)
-    for row in backend.search(text_input.get(), author_input.get(), year_input.get(), isbn_input.get()):
+    for row in Database.search(text_input.get(), author_input.get(), year_input.get(), isbn_input.get()):
         list.insert(END, row)
 
 
 def add_command():
-    backend.insert(text_input.get(), author_input.get(), year_input.get(), isbn_input.get())
+    Database.insert(text_input.get(), author_input.get(), year_input.get(), isbn_input.get())
     list.delete(0, END)
     list.insert(END, (text_input.get(), author_input.get(), year_input.get(), isbn_input.get()))
 
 
 def delete_command():
-    backend.delete(selected_tuple[0])
+    Database.delete(selected_tuple[0])
 
 
 def update_command():
-    backend.update(selected_tuple[0], text_input.get(), author_input.get(), year_input.get(), isbn_input.get())
+    Database.update(selected_tuple[0], text_input.get(), author_input.get(), year_input.get(), isbn_input.get())
+
+
+def exit_command():
+    exit()
 
 
 window = Tk()
@@ -105,7 +113,7 @@ b1.grid(row=5, column=3)
 b1 = Button(window, text="Delete", width=12, command=delete_command)
 b1.grid(row=6, column=3)
 
-b1 = Button(window, text="Exit", width=12)
+b1 = Button(window, text="Exit", width=12, command=exit_command)
 b1.grid(row=7, column=3)
 
 
